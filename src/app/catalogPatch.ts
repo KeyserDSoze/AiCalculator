@@ -36,3 +36,12 @@ patched.serverProfiles = [
   ...smallServerProfiles,
   ...(patched.serverProfiles || []).filter((s: any) => s.role !== 'proxy')
 ];
+
+// Planning rental rates for the compact profiles. Provider-specific public
+// offers shown by the marketplace still take precedence for procurement.
+patched.rental = patched.rental || { serverHourlyEur: {}, proxyMonthlyEur: 450 };
+patched.rental.serverHourlyEur = {
+  ...(patched.rental.serverHourlyEur || {}),
+  'gpu-1x-rtxpro6000': 1.85,
+  'gpu-2x-rtxpro6000': 3.70
+};
