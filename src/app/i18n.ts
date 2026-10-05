@@ -1,0 +1,76 @@
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+
+i18n.use(initReactI18next).init({
+  lng: localStorage.getItem('ai-calculator-language') || 'it',
+  fallbackLng: 'en',
+  interpolation: { escapeValue: false },
+  resources: {
+    it: { translation: {
+      title: 'AI Infrastructure Calculator',
+      subtitle: 'Dimensiona LLMProxy, server di inferenza e costi on-prem, colocation o noleggio.',
+      inputs: 'Input di progetto',
+      model: 'Modello massimale',
+      users: 'Utenti medi',
+      concurrent: 'Utenti contemporanei',
+      avgContext: 'Context medio',
+      maxContext: 'Context massimo consentito',
+      outputTokens: 'Output medio per richiesta',
+      strategy: 'Profilo di dimensionamento',
+      conservative: 'Economico',
+      balanced: 'Bilanciato',
+      performance: 'Prestazioni',
+      scenarios: 'Scenari consigliati',
+      onprem: 'On-prem',
+      colo: 'Colocation',
+      rental: 'Noleggio / cloud',
+      proxy: 'LLMProxy',
+      inference: 'Inferenza',
+      annual: 'Costo annuo stimato',
+      capex: 'CAPEX',
+      monthly: 'Mensile',
+      save: 'Salva scenario',
+      saved: 'Scenari salvati',
+      exportPdf: 'Esporta PDF',
+      exportXlsx: 'Esporta Excel',
+      dark: 'Scuro',
+      light: 'Chiaro',
+      assumptions: 'Assunzioni',
+      warnings: 'Limiti e avvisi'
+    }},
+    en: { translation: {
+      title: 'AI Infrastructure Calculator',
+      subtitle: 'Size LLMProxy, inference servers and on-prem, colocation or rental costs.',
+      inputs: 'Project inputs',
+      model: 'Maximum model',
+      users: 'Average users',
+      concurrent: 'Concurrent users',
+      avgContext: 'Average context',
+      maxContext: 'Maximum allowed context',
+      outputTokens: 'Average output per request',
+      strategy: 'Sizing profile',
+      conservative: 'Economy',
+      balanced: 'Balanced',
+      performance: 'Performance',
+      scenarios: 'Recommended scenarios',
+      onprem: 'On-prem',
+      colo: 'Colocation',
+      rental: 'Rental / cloud',
+      proxy: 'LLMProxy',
+      inference: 'Inference',
+      annual: 'Estimated annual cost',
+      capex: 'CAPEX',
+      monthly: 'Monthly',
+      save: 'Save scenario',
+      saved: 'Saved scenarios',
+      exportPdf: 'Export PDF',
+      exportXlsx: 'Export Excel',
+      dark: 'Dark',
+      light: 'Light',
+      assumptions: 'Assumptions',
+      warnings: 'Limits and warnings'
+    }}
+  }
+});
+
+export default i18n;
