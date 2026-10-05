@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './catalogPatch';
 import './i18n';
+import './modelCatalogCompare.css';
 import { DEFAULT_INPUT } from './calculator';
 import expandedModels from '../data/models-expanded.json';
 import App from './App';
