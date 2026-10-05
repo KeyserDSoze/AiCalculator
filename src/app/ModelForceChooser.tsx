@@ -17,11 +17,34 @@ function paramsLabel(model: (typeof models)[number]) {
     : `${model.parametersTotalB}B`;
 }
 
+function maxContextControl() {
+  const labels = Array.from(document.querySelectorAll('label'));
+  const label = labels.find(node => {
+    const text = (node.textContent || '').toLowerCase();
+    return text.includes('context massimo') || text.includes('max context');
+  });
+  return label?.querySelector('input') as HTMLInputElement | null;
+}
+
+function readRequiredMax() {
+  const value = Number(maxContextControl()?.value || 0);
+  return Number.isFinite(value) ? value : 0;
+}
+
+function setReactInputValue(input: HTMLInputElement, value: number) {
+  const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
+  if (setter) setter.call(input, String(value));
+  else input.value = String(value);
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+  input.dispatchEvent(new Event('change', { bubbles: true }));
+}
+
 export default function ModelForceChooser() {
   const [host, setHost] = useState<HTMLElement | null>(null);
   const currentFromUrl = new URLSearchParams(window.location.search).get('model');
   const persisted = currentFromUrl || localStorage.getItem('ai-calculator-model') || '';
   const [selected, setSelected] = useState(persisted || models[0]?.id || '');
+  const [requiredMax, setRequiredMax] = useState(0);
 
   useEffect(() => {
     const section = document.getElementById('models');
@@ -37,6 +60,15 @@ export default function ModelForceChooser() {
       else section.appendChild(slot);
     }
     setHost(slot);
+
+    const refresh = () => setRequiredMax(readRequiredMax());
+    refresh();
+    document.addEventListener('input', refresh, true);
+    document.addEventListener('change', refresh, true);
+    return () => {
+      document.removeEventListener('input', refresh, true);
+      document.removeEventListener('change', refresh, true);
+    };
   }, []);
 
   const ordered = useMemo(() => models.slice().sort((a, b) => {
@@ -45,6 +77,8 @@ export default function ModelForceChooser() {
   }), []);
 
   const chosen = models.find(model => model.id === selected);
+  const chosenMax = Number(chosen?.maxExtendedContextTokens || chosen?.nativeContextTokens || 0);
+  const maxMismatch = Boolean(chosen && requiredMax > chosenMax && chosenMax > 0);
 
   const applyModel = (id: string) => {
     setSelected(id);
@@ -60,6 +94,12 @@ export default function ModelForceChooser() {
     const url = new URL(window.location.href);
     url.searchParams.set('model', id);
     window.location.assign(url.toString());
+  };
+
+  const useModelMax = () => {
+    if (!chosenMax) return;
+    const input = maxContextControl();
+    if (input) setReactInputValue(input, chosenMax);
   };
 
   const openCatalog = () => {
@@ -90,6 +130,14 @@ export default function ModelForceChooser() {
         </label>
         <button type="button" onClick={openCatalog}>Cerca nei {models.length} modelli</button>
       </div>
+
+      {maxMismatch && <div className="model-context-warning">
+        <div>
+          <b>⚠ Il modello non copre il context massimo richiesto</b>
+          <span>Hai richiesto {contextLabel(requiredMax)}, mentre {chosen?.name} arriva a {contextLabel(chosenMax)}. Un server più potente non può superare il limite del modello: i costi vengono stimati sul carico medio e sul context effettivamente supportato.</span>
+        </div>
+        <button type="button" onClick={useModelMax}>Imposta max a {contextLabel(chosenMax)}</button>
+      </div>}
 
       {chosen && <div className="model-force-current">
         <span><small>PARAMETRI</small><b>{paramsLabel(chosen)}</b></span>

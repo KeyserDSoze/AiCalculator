@@ -10,6 +10,7 @@ import ModelCatalogOverlay from './ModelCatalogOverlay';
 import ModelComparisonOverlay from './ModelComparisonOverlay';
 import ModelForceChooser from './ModelForceChooser';
 import PremiumPdfController from './PremiumPdfController';
+import CostSanityController from './CostSanityController';
 
 const LIVE_INPUT_KEY = 'ai-calculator-live-input';
 
@@ -37,5 +38,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <ModelCatalogOverlay />
     <ModelComparisonOverlay />
     <PremiumPdfController />
+    <CostSanityController />
   </React.StrictMode>
 );
