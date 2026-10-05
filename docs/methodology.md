@@ -2,45 +2,41 @@
 
 ## Workload inputs
 
-The engine currently uses:
+The engine uses the largest model that must be supported, average user population, peak concurrent users, average and maximum context, average output size, and a sizing profile (economy, balanced, performance).
 
-1. Maximum model that must be supported.
-2. Average user population.
-3. Concurrent active users.
-4. Average context tokens.
-5. Maximum allowed context tokens.
-6. Average output tokens.
-7. Sizing profile: economy, balanced or performance.
-
-The distinction between average and maximum context is intentional. Configuring a model for a 256K or 1M ceiling does not imply that every session consumes that entire context. Capacity is estimated from the configured average context while the maximum context is used to flag architectural limits and burst risk.
+Average context drives steady-state capacity. Maximum context is a hard architectural check and a burst-risk signal: configuring 256K or 1M does not mean every request consumes the entire window.
 
 ## Inference sizing
 
-The initial implementation derives a conservative estimate of model-weight memory, usable VRAM and KV-cache pressure. It then estimates concurrent sessions per inference node and applies a headroom factor according to the selected sizing profile.
+The planning engine estimates model-weight memory from the selected sizing profile, usable VRAM, KV-cache pressure, compute pressure and the number of replicas required for the requested concurrency. The result is deliberately conservative and must be replaced by measured runtime benchmarks before procurement.
 
-This is a planning model, not a substitute for benchmarking. The catalog is intended to evolve with measured values such as:
+Measured data should eventually override heuristics for prefilling tokens/s, decode tokens/s, TTFT, KV-cache bytes/token, scheduler latency and maximum stable concurrency by context bucket.
 
-- prefilling tokens/s by model, precision and GPU topology;
-- decode tokens/s at different batch sizes;
-- time-to-first-token percentiles;
-- KV-cache bytes/token or measured session memory;
-- scheduler queue latency;
-- maximum stable concurrency by context bucket.
+## Hardware feasibility advisor
 
-When measured data is available, those observations should take precedence over generic estimates.
+Every inference server family is evaluated against the same workload and is assigned one of four states:
+
+- **Impossible**: the requested model/context is outside the model limit, or a single model replica would require more physical nodes than the practical sharding limit assigned to that hardware class.
+- **Strained**: technically feasible, but the design relies on multi-node sharding, weak inter-node fabric, a hardware tier below the model guidance, very high VRAM occupancy, or too little per-replica concurrency.
+- **Recommended**: technically sensible with manageable horizontal scaling and no major topology warning.
+- **Top**: the model fits in one replica with strong memory margin and one replica alone already covers at least roughly the requested peak concurrency with additional performance margin.
+
+Practical sharding limits are planning guardrails, not vendor guarantees: enterprise GPU servers are limited to 2 nodes per replica, datacenter systems to 4, frontier systems to 8, and rack-scale profiles are treated as one integrated system. These limits prevent the calculator from presenting a theoretically possible but operationally unreasonable cluster as a normal solution.
+
+For each hardware family the advisor exposes required node count, nodes per model replica, total GPUs/VRAM, estimated concurrent capacity, capacity headroom, model-weight VRAM utilization, acquisition CAPEX and peak IT power. A forced hardware selection keeps its warning status visible; Auto avoids options classified as impossible.
 
 ## LLMProxy sizing
 
-LLMProxy is treated as a separate control/data-plane service from GPU inference. It requires CPU, RAM, storage and network capacity but no GPU. The first sizing profile uses one proxy server for ordinary deployments and moves to two instances for larger populations or a performance-oriented profile.
+LLMProxy remains separate from GPU inference. It requires CPU, RAM, storage and network capacity but no GPU. The current model uses one proxy server for ordinary deployments and two for larger populations or a performance-oriented profile.
 
-Future versions should size PostgreSQL, Redis, observability storage and audit-log retention independently, since retention of full request and response bodies can dominate disk requirements.
+Future versions should size PostgreSQL, Redis, observability storage and request/response audit retention independently.
 
 ## Cost model
 
-The catalog stores mutable reference prices for hardware, energy, colocation and rental. These values include a date and update cadence and should be refreshed monthly.
+The catalog stores mutable reference prices for hardware, electricity, colocation and rental. Values include an update date and should be refreshed monthly.
 
-For owned hardware the tool separates CAPEX from annualized cost. On-premises estimates add electricity, PUE/cooling, maintenance and a one-time facility fit-out allowance. Colocation adds rack, network and committed power. Rental/cloud converts GPU-hour pricing into a monthly estimate using the selected utilization assumption.
+Owned on-prem hardware separates server CAPEX from electricity, variable PUE/cooling overhead, fixed cooling cost, maintenance, hardware amortization and facility fit-out. Colocation adds rack, network and committed power. Rental/cloud converts server-hour pricing into monthly operating cost.
 
 ## Recommendation output
 
-The calculator never hides alternatives. It presents all supported deployment modes and lets the user choose the preferred one after seeing CAPEX, monthly cost, annualized cost, inferred capacity, warnings and assumptions. The saved scenario preserves both the selected inputs and the full set of alternatives for later comparison.
+The calculator does not hide alternatives. It shows hardware feasibility first, then deployment scenarios. PDF and Excel exports preserve the selected workload, hardware advisor results, deployment costs and assumptions so the decision can be reviewed later.
