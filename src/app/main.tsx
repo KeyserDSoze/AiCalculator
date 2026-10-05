@@ -8,6 +8,7 @@ import expandedModels from '../data/models-expanded.json';
 import App from './App';
 import ModelCatalogOverlay from './ModelCatalogOverlay';
 import ModelComparisonOverlay from './ModelComparisonOverlay';
+import PremiumPdfController from './PremiumPdfController';
 
 const LIVE_INPUT_KEY = 'ai-calculator-live-input';
 
@@ -33,5 +34,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <App />
     <ModelCatalogOverlay />
     <ModelComparisonOverlay />
+    <PremiumPdfController />
   </React.StrictMode>
 );
