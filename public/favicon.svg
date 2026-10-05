@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="AI Calculator">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#1677ff"/>
+      <stop offset="1" stop-color="#6c5ce7"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#0b1020"/>
+  <rect x="14" y="14" width="36" height="36" rx="9" fill="url(#g)"/>
+  <path d="M23 24h18v5H23zm0 11h7v7h-7zm11 0h7v7h-7z" fill="#fff"/>
+  <path d="M18 9v7M28 9v7M38 9v7M46 9v7M18 48v7M28 48v7M38 48v7M46 48v7M9 18h7M9 28h7M9 38h7M9 46h7M48 18h7M48 28h7M48 38h7M48 46h7" stroke="#8fbaff" stroke-width="2.4" stroke-linecap="round"/>
+</svg>

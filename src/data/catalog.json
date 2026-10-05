@@ -3,135 +3,58 @@
     "currency": "EUR",
     "lastUpdated": "2026-10-05",
     "updateCadence": "monthly",
-    "notes": "Seed values. Replace estimates with vendor quotes and measured benchmark data over time."
+    "benchmarkMethod": "Planning index 0-100 normalized from public benchmark results and model-card evidence. It is not a literal single benchmark score.",
+    "notes": "Reference catalog for planning. Vendor specifications are separated from market-price estimates; refresh prices monthly and replace estimates with quotes before procurement."
   },
+  "hardwareTiers": [
+    {"id":"enterprise","rank":1,"label":"Enterprise GPU"},
+    {"id":"datacenter","rank":2,"label":"Datacenter 8-GPU"},
+    {"id":"frontier","rank":3,"label":"Frontier 8-GPU"},
+    {"id":"rackscale","rank":4,"label":"Rack-scale AI factory"}
+  ],
   "models": [
-    {
-      "id": "qwen3-coder-30b-a3b",
-      "name": "Qwen3-Coder-30B-A3B-Instruct",
-      "vendor": "Qwen",
-      "kind": "coding",
-      "parametersTotalB": 30,
-      "parametersActiveB": 3,
-      "nativeContextTokens": 262144,
-      "recommendedDefaultContextTokens": 65536,
-      "maxExtendedContextTokens": 262144,
-      "precisionProfiles": ["FP8", "INT8", "INT4"],
-      "qualityTier": 3,
-      "notes": "Good default coding tier for high concurrency and agentic workflows."
-    },
-    {
-      "id": "qwen3-32b",
-      "name": "Qwen3-32B",
-      "vendor": "Qwen",
-      "kind": "general",
-      "parametersTotalB": 32,
-      "parametersActiveB": 32,
-      "nativeContextTokens": 131072,
-      "recommendedDefaultContextTokens": 65536,
-      "maxExtendedContextTokens": 131072,
-      "precisionProfiles": ["FP8", "INT8", "INT4"],
-      "qualityTier": 3,
-      "notes": "General-purpose reasoning, analysis and bilingual work."
-    },
-    {
-      "id": "qwen3-coder-480b-a35b",
-      "name": "Qwen3-Coder-480B-A35B-Instruct",
-      "vendor": "Qwen",
-      "kind": "coding-large",
-      "parametersTotalB": 480,
-      "parametersActiveB": 35,
-      "nativeContextTokens": 262144,
-      "maxExtendedContextTokens": 1000000,
-      "recommendedDefaultContextTokens": 131072,
-      "precisionProfiles": ["FP8", "INT8", "INT4"],
-      "qualityTier": 5,
-      "notes": "Large agentic coding model; extended context depends on runtime configuration and substantial KV-cache capacity."
-    }
+    {"id":"qwen3-coder-30b-a3b","name":"Qwen3-Coder-30B-A3B-Instruct","vendor":"Qwen","kind":"coding","license":"Apache 2.0","parametersTotalB":30,"parametersActiveB":3,"nativeContextTokens":262144,"recommendedDefaultContextTokens":65536,"maxExtendedContextTokens":262144,"precisionProfiles":["FP8","INT8","INT4"],"minHardwareTier":"enterprise","benchmarks":{"coding":86,"general":78,"thinking":82,"confidence":"medium"},"notes":"Efficient coding/agentic tier for high concurrency and modest hardware footprints.","sources":["https://huggingface.co/Qwen/Qwen3-Coder-30B-A3B-Instruct"]},
+    {"id":"qwen3-coder-480b-a35b","name":"Qwen3-Coder-480B-A35B-Instruct","vendor":"Qwen","kind":"coding-large","license":"Apache 2.0","parametersTotalB":480,"parametersActiveB":35,"nativeContextTokens":262144,"recommendedDefaultContextTokens":131072,"maxExtendedContextTokens":1000000,"precisionProfiles":["FP8","INT8","INT4"],"minHardwareTier":"datacenter","benchmarks":{"coding":96,"general":88,"thinking":91,"confidence":"high"},"notes":"Flagship agentic coding model; 256K native context and up to 1M with extrapolation methods.","sources":["https://qwenlm.github.io/blog/qwen3-coder/"]},
+    {"id":"qwen3-32b","name":"Qwen3-32B","vendor":"Qwen","kind":"general","license":"Apache 2.0","parametersTotalB":32,"parametersActiveB":32,"nativeContextTokens":131072,"recommendedDefaultContextTokens":65536,"maxExtendedContextTokens":131072,"precisionProfiles":["FP8","INT8","INT4"],"minHardwareTier":"enterprise","benchmarks":{"coding":79,"general":86,"thinking":87,"confidence":"medium"},"notes":"Dense general-purpose model with strong reasoning for its size.","sources":["https://huggingface.co/Qwen/Qwen3-32B"]},
+    {"id":"gpt-oss-20b","name":"gpt-oss-20b","vendor":"OpenAI","kind":"reasoning","license":"Apache 2.0","parametersTotalB":20,"parametersActiveB":3.6,"nativeContextTokens":131072,"recommendedDefaultContextTokens":65536,"maxExtendedContextTokens":131072,"precisionProfiles":["MXFP4","FP8"],"minHardwareTier":"enterprise","benchmarks":{"coding":84,"general":86,"thinking":91,"confidence":"high"},"notes":"Compact open-weight reasoning model with configurable reasoning effort and agentic features.","sources":["https://openai.com/open-models/","https://deploymentsafety.openai.com/gpt-oss"]},
+    {"id":"gpt-oss-120b","name":"gpt-oss-120b","vendor":"OpenAI","kind":"reasoning","license":"Apache 2.0","parametersTotalB":117,"parametersActiveB":5.1,"nativeContextTokens":131072,"recommendedDefaultContextTokens":65536,"maxExtendedContextTokens":131072,"precisionProfiles":["MXFP4","FP8"],"minHardwareTier":"enterprise","benchmarks":{"coding":90,"general":93,"thinking":96,"confidence":"high"},"notes":"Open-weight reasoning model; official model card reports 90.0 MMLU, 80.1 GPQA Diamond and 62.4 SWE-bench Verified at high reasoning effort.","sources":["https://openai.com/open-models/","https://developers.openai.com/api/docs/models/gpt-oss-120b","https://deploymentsafety.openai.com/gpt-oss"]},
+    {"id":"deepseek-r1-671b","name":"DeepSeek-R1 671B","vendor":"DeepSeek","kind":"reasoning-large","license":"MIT","parametersTotalB":671,"parametersActiveB":37,"nativeContextTokens":131072,"recommendedDefaultContextTokens":65536,"maxExtendedContextTokens":131072,"precisionProfiles":["FP8","INT8","INT4"],"minHardwareTier":"datacenter","benchmarks":{"coding":90,"general":92,"thinking":97,"confidence":"medium"},"notes":"Large MoE reasoning model. Use datacenter-class multi-GPU systems for practical concurrency.","sources":["https://huggingface.co/deepseek-ai/DeepSeek-R1"]},
+    {"id":"deepseek-v3-2","name":"DeepSeek-V3.2","vendor":"DeepSeek","kind":"general-reasoning","license":"MIT","parametersTotalB":671,"parametersActiveB":37,"nativeContextTokens":131072,"recommendedDefaultContextTokens":65536,"maxExtendedContextTokens":131072,"precisionProfiles":["FP8","INT8"],"minHardwareTier":"datacenter","benchmarks":{"coding":93,"general":94,"thinking":96,"confidence":"medium"},"notes":"Large MoE general/reasoning model; 671B inference configuration is publicly available.","sources":["https://huggingface.co/deepseek-ai/DeepSeek-V3.2"]},
+    {"id":"llama-4-maverick","name":"Llama 4 Maverick","vendor":"Meta","kind":"multimodal-general","license":"Llama 4 Community","parametersTotalB":400,"parametersActiveB":17,"nativeContextTokens":1000000,"recommendedDefaultContextTokens":131072,"maxExtendedContextTokens":1000000,"precisionProfiles":["FP8","INT8","INT4"],"minHardwareTier":"datacenter","benchmarks":{"coding":84,"general":90,"thinking":86,"confidence":"medium"},"notes":"Mixture-of-experts multimodal model with a very large context window.","sources":["https://huggingface.co/meta-llama/Llama-4-Maverick-17B-128E-Instruct"]},
+    {"id":"mistral-large-3","name":"Mistral Large 3","vendor":"Mistral AI","kind":"multimodal-general","license":"Apache 2.0","parametersTotalB":675,"parametersActiveB":41,"nativeContextTokens":262144,"recommendedDefaultContextTokens":131072,"maxExtendedContextTokens":262144,"precisionProfiles":["FP8","INT8"],"minHardwareTier":"datacenter","benchmarks":{"coding":90,"general":94,"thinking":91,"confidence":"high"},"notes":"Open-weight multimodal MoE with 41B active / 675B total parameters and 256K context.","sources":["https://docs.mistral.ai/models/mistral-large-3-25-12","https://mistral.ai/news/mistral-3/"]},
+    {"id":"gemma-3-27b","name":"Gemma 3 27B","vendor":"Google","kind":"multimodal-general","license":"Gemma","parametersTotalB":27,"parametersActiveB":27,"nativeContextTokens":131072,"recommendedDefaultContextTokens":65536,"maxExtendedContextTokens":131072,"precisionProfiles":["BF16","FP8","INT8","INT4"],"minHardwareTier":"enterprise","benchmarks":{"coding":72,"general":82,"thinking":76,"confidence":"high"},"notes":"Efficient multimodal model; public card reports 78.6 MMLU and 65.6 MBPP for the 27B pre-trained variant.","sources":["https://huggingface.co/google/gemma-3-27b-it"]},
+    {"id":"glm-5-2","name":"GLM-5.2","vendor":"Z.ai","kind":"agentic-reasoning","license":"MIT","parametersTotalB":753,"parametersActiveB":32,"nativeContextTokens":1048576,"recommendedDefaultContextTokens":131072,"maxExtendedContextTokens":1048576,"precisionProfiles":["FP8","BF16"],"minHardwareTier":"frontier","benchmarks":{"coding":96,"general":95,"thinking":97,"confidence":"high"},"notes":"Flagship open model for long-horizon agentic engineering with solid 1M context; public results include 81.0 Terminal-Bench 2.1 and 62.1 SWE-bench Pro.","sources":["https://huggingface.co/zai-org/GLM-5.2","https://huggingface.co/docs/transformers/model_doc/glm_moe_dsa"]},
+    {"id":"nemotron-3-ultra-550b","name":"NVIDIA Nemotron 3 Ultra 550B-A55B","vendor":"NVIDIA","kind":"agentic-reasoning","license":"OpenMDW 1.1","parametersTotalB":550,"parametersActiveB":55,"nativeContextTokens":1000000,"recommendedDefaultContextTokens":131072,"maxExtendedContextTokens":1000000,"precisionProfiles":["NVFP4","BF16"],"minHardwareTier":"frontier","benchmarks":{"coding":95,"general":95,"thinking":96,"confidence":"high"},"notes":"Frontier-scale open model for agentic workflows; NVIDIA lists up to 1M context and a minimum of 4x B200/GB200/GB300/B300 for the NVFP4 variant.","sources":["https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4"]}
   ],
   "gpus": [
-    {
-      "id": "rtx-pro-6000-blackwell-server",
-      "name": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
-      "vramGb": 96,
-      "memoryBandwidthGbps": 1597,
-      "tdpWatts": 600,
-      "estimatedStreetPriceEur": 23000,
-      "sourceClass": "vendor+market-estimate"
-    },
-    {
-      "id": "h200-sxm",
-      "name": "NVIDIA H200 SXM",
-      "vramGb": 141,
-      "tdpWatts": 700,
-      "estimatedStreetPriceEur": 35000,
-      "sourceClass": "estimate"
-    },
-    {
-      "id": "b200-sxm",
-      "name": "NVIDIA B200 SXM",
-      "vramGb": 180,
-      "tdpWatts": 1000,
-      "estimatedStreetPriceEur": 45000,
-      "sourceClass": "estimate"
-    }
+    {"id":"rtx-pro-6000-blackwell-server","name":"NVIDIA RTX PRO 6000 Blackwell Server Edition","vramGb":96,"tdpWatts":600,"sourceClass":"vendor+market"},
+    {"id":"h200-sxm","name":"NVIDIA H200 SXM","vramGb":141,"tdpWatts":700,"sourceClass":"vendor+market"},
+    {"id":"b200-sxm","name":"NVIDIA B200 SXM","vramGb":180,"tdpWatts":1000,"sourceClass":"vendor+market"},
+    {"id":"b300-sxm","name":"NVIDIA B300 / Blackwell Ultra","vramGb":288,"tdpWatts":1400,"sourceClass":"market-estimate"},
+    {"id":"gb200-rack","name":"NVIDIA GB200 NVL72","vramGb":186,"tdpWatts":1800,"sourceClass":"vendor+analyst-estimate"},
+    {"id":"gb300-rack","name":"NVIDIA GB300 NVL72","vramGb":278,"tdpWatts":1800,"sourceClass":"vendor+analyst-estimate"}
   ],
   "serverProfiles": [
-    {
-      "id": "proxy-standard",
-      "role": "proxy",
-      "name": "LLMProxy Standard",
-      "cpuCores": 24,
-      "ramGb": 128,
-      "storageTb": 3.84,
-      "networkGbps": 25,
-      "estimatedPurchaseEur": 9000,
-      "idleWatts": 250,
-      "peakWatts": 550
-    },
-    {
-      "id": "proxy-ha",
-      "role": "proxy",
-      "name": "LLMProxy HA Pair",
-      "cpuCores": 48,
-      "ramGb": 256,
-      "storageTb": 7.68,
-      "networkGbps": 25,
-      "estimatedPurchaseEur": 18000,
-      "idleWatts": 500,
-      "peakWatts": 1100
-    },
-    {
-      "id": "gpu-4x-rtxpro6000",
-      "role": "inference",
-      "name": "4x RTX PRO 6000 Blackwell Server",
-      "gpuId": "rtx-pro-6000-blackwell-server",
-      "gpuCount": 4,
-      "totalVramGb": 384,
-      "ramGb": 768,
-      "storageTb": 15.36,
-      "networkGbps": 100,
-      "estimatedPurchaseEur": 100000,
-      "idleWatts": 1200,
-      "peakWatts": 3600
-    }
+    {"id":"proxy-standard","role":"proxy","name":"LLMProxy Standard","hardwareTier":"cpu","cpuCores":24,"ramGb":128,"storageTb":3.84,"networkGbps":25,"estimatedPurchaseEur":9000,"idleWatts":250,"peakWatts":550,"rackUnits":1,"priceAsOf":"2026-10-05","sourceClass":"planning-estimate"},
+    {"id":"gpu-4x-rtxpro6000","role":"inference","name":"4x RTX PRO 6000 Blackwell","hardwareTier":"enterprise","gpuId":"rtx-pro-6000-blackwell-server","gpuCount":4,"totalVramGb":384,"ramGb":768,"storageTb":15.36,"networkGbps":100,"estimatedPurchaseEur":105000,"idleWatts":1200,"peakWatts":3800,"inferenceIndex":1.0,"rackUnits":4,"cooling":"air","priceAsOf":"2026-10-05","sourceClass":"market-estimate","notes":"Cost planning estimate derived from current 8-GPU market systems."},
+    {"id":"gpu-8x-rtxpro6000","role":"inference","name":"8x RTX PRO 6000 Blackwell","hardwareTier":"enterprise","gpuId":"rtx-pro-6000-blackwell-server","gpuCount":8,"totalVramGb":768,"ramGb":1536,"storageTb":16,"networkGbps":100,"estimatedPurchaseEur":182000,"idleWatts":1800,"peakWatts":6800,"inferenceIndex":1.9,"rackUnits":7,"cooling":"air","priceAsOf":"2026-10-05","sourceClass":"public-market","notes":"EU public reference around €181.9k ex VAT for an 8x RTX PRO 6000 Max-Q server."},
+    {"id":"hgx-h200-8x","role":"inference","name":"8x H200 HGX","hardwareTier":"datacenter","gpuId":"h200-sxm","gpuCount":8,"totalVramGb":1128,"ramGb":2048,"storageTb":30.72,"networkGbps":400,"estimatedPurchaseEur":325000,"idleWatts":2600,"peakWatts":9100,"inferenceIndex":2.5,"rackUnits":8,"cooling":"air","priceAsOf":"2026-10-05","sourceClass":"public-market","notes":"2026 OEM references cluster around the low-to-mid $300k range."},
+    {"id":"hgx-b200-8x","role":"inference","name":"8x B200 HGX","hardwareTier":"frontier","gpuId":"b200-sxm","gpuCount":8,"totalVramGb":1440,"ramGb":2048,"storageTb":30.72,"networkGbps":800,"estimatedPurchaseEur":390000,"idleWatts":3500,"peakWatts":13500,"inferenceIndex":5.0,"rackUnits":8,"cooling":"air-or-liquid","priceAsOf":"2026-10-05","sourceClass":"public-market","notes":"Public 2026 configured systems around $384k-$435k."},
+    {"id":"dgx-b200-8x","role":"inference","name":"NVIDIA DGX B200","hardwareTier":"frontier","gpuId":"b200-sxm","gpuCount":8,"totalVramGb":1440,"ramGb":4096,"storageTb":30.72,"networkGbps":400,"estimatedPurchaseEur":545000,"idleWatts":4000,"peakWatts":14300,"inferenceIndex":5.3,"rackUnits":10,"cooling":"air","priceAsOf":"2026-10-05","sourceClass":"reseller-estimate","notes":"DGX B200 has 1,440 GB GPU memory and ~14.3 kW max power; public reseller pricing is around the mid-$500k range."},
+    {"id":"hgx-b300-8x","role":"inference","name":"8x B300 / Blackwell Ultra","hardwareTier":"frontier","gpuId":"b300-sxm","gpuCount":8,"totalVramGb":2304,"ramGb":2048,"storageTb":30.72,"networkGbps":800,"estimatedPurchaseEur":560000,"idleWatts":4200,"peakWatts":14500,"inferenceIndex":7.0,"rackUnits":8,"cooling":"liquid-preferred","priceAsOf":"2026-10-05","sourceClass":"public-market","notes":"2026 Tier-1 OEM systems are publicly listed around the high-$500k range."},
+    {"id":"gb200-nvl72","role":"inference","name":"NVIDIA GB200 NVL72 rack","hardwareTier":"rackscale","gpuId":"gb200-rack","gpuCount":72,"totalVramGb":13400,"ramGb":17000,"storageTb":120,"networkGbps":800,"estimatedPurchaseEur":3100000,"idleWatts":45000,"peakWatts":130000,"inferenceIndex":45.0,"rackUnits":42,"cooling":"liquid","priceAsOf":"2026-10-05","sourceClass":"analyst-estimate","notes":"72 Blackwell GPUs / 36 Grace CPUs / 13.4 TB HBM3E. Analyst estimates put rack-only purchase around $3.1M."},
+    {"id":"gb300-nvl72","role":"inference","name":"NVIDIA GB300 NVL72 rack","hardwareTier":"rackscale","gpuId":"gb300-rack","gpuCount":72,"totalVramGb":20000,"ramGb":20000,"storageTb":120,"networkGbps":800,"estimatedPurchaseEur":4500000,"idleWatts":50000,"peakWatts":135000,"inferenceIndex":60.0,"rackUnits":42,"cooling":"liquid","priceAsOf":"2026-10-05","sourceClass":"analyst-estimate","notes":"72 Blackwell Ultra GPUs. 2026 market/analyst estimates are roughly $4.3M-$5.0M before full facility integration."}
   ],
-  "facility": {
-    "electricityEurPerKwh": 0.20,
-    "defaultPue": 1.45,
-    "onPremFitoutEur": 50000,
-    "coloRackMonthlyEur": 750,
-    "coloPowerEurPerKwMonth": 338,
-    "coloNetworkMonthlyEur": 500,
-    "hardwareAmortizationYears": 4,
-    "maintenancePercentPerYear": 0.08
-  },
-  "rental": {
-    "gpuHourlyEur": {
-      "rtx-pro-6000-blackwell-server": 2.8,
-      "h200-sxm": 4.5,
-      "b200-sxm": 6.5
-    },
-    "proxyMonthlyEur": 450
-  }
+  "facility": {"electricityEurPerKwh":0.20,"defaultPue":1.45,"defaultCoolingFixedAnnualEur":6000,"onPremFitoutEur":50000,"coloRackMonthlyEur":750,"coloPowerEurPerKwMonth":338,"coloNetworkMonthlyEur":500,"hardwareAmortizationYears":4,"maintenancePercentPerYear":0.08},
+  "rental": {"serverHourlyEur":{"gpu-4x-rtxpro6000":7.0,"gpu-8x-rtxpro6000":13.6,"hgx-h200-8x":30.5,"hgx-b200-8x":47.9,"dgx-b200-8x":52.0,"hgx-b300-8x":62.0,"gb200-nvl72":756.0,"gb300-nvl72":900.0},"proxyMonthlyEur":450},
+  "sourceNotes": [
+    {"label":"Qwen3-Coder","url":"https://qwenlm.github.io/blog/qwen3-coder/"},
+    {"label":"OpenAI gpt-oss","url":"https://openai.com/open-models/"},
+    {"label":"Mistral Large 3","url":"https://docs.mistral.ai/models/mistral-large-3-25-12"},
+    {"label":"NVIDIA Nemotron 3 Ultra","url":"https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-NVFP4"},
+    {"label":"NVIDIA DGX B200","url":"https://www.nvidia.com/en-eu/data-center/dgx-b200/"},
+    {"label":"NVIDIA GB200 NVL72","url":"https://www.nvidia.com/en-eu/data-center/gb200-nvl72/"},
+    {"label":"Public HGX B200 reference","url":"https://configurator.sabrepc.com/configure/ES4-8793011"},
+    {"label":"2026 GPU server market references","url":"https://upstation.io/gpu-servers"}
+  ]
 }
