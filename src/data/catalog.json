@@ -1,0 +1,137 @@
+{
+  "meta": {
+    "currency": "EUR",
+    "lastUpdated": "2026-10-05",
+    "updateCadence": "monthly",
+    "notes": "Seed values. Replace estimates with vendor quotes and measured benchmark data over time."
+  },
+  "models": [
+    {
+      "id": "qwen3-coder-30b-a3b",
+      "name": "Qwen3-Coder-30B-A3B-Instruct",
+      "vendor": "Qwen",
+      "kind": "coding",
+      "parametersTotalB": 30,
+      "parametersActiveB": 3,
+      "nativeContextTokens": 262144,
+      "recommendedDefaultContextTokens": 65536,
+      "maxExtendedContextTokens": 262144,
+      "precisionProfiles": ["FP8", "INT8", "INT4"],
+      "qualityTier": 3,
+      "notes": "Good default coding tier for high concurrency and agentic workflows."
+    },
+    {
+      "id": "qwen3-32b",
+      "name": "Qwen3-32B",
+      "vendor": "Qwen",
+      "kind": "general",
+      "parametersTotalB": 32,
+      "parametersActiveB": 32,
+      "nativeContextTokens": 131072,
+      "recommendedDefaultContextTokens": 65536,
+      "maxExtendedContextTokens": 131072,
+      "precisionProfiles": ["FP8", "INT8", "INT4"],
+      "qualityTier": 3,
+      "notes": "General-purpose reasoning, analysis and bilingual work."
+    },
+    {
+      "id": "qwen3-coder-480b-a35b",
+      "name": "Qwen3-Coder-480B-A35B-Instruct",
+      "vendor": "Qwen",
+      "kind": "coding-large",
+      "parametersTotalB": 480,
+      "parametersActiveB": 35,
+      "nativeContextTokens": 262144,
+      "maxExtendedContextTokens": 1000000,
+      "recommendedDefaultContextTokens": 131072,
+      "precisionProfiles": ["FP8", "INT8", "INT4"],
+      "qualityTier": 5,
+      "notes": "Large agentic coding model; extended context depends on runtime configuration and substantial KV-cache capacity."
+    }
+  ],
+  "gpus": [
+    {
+      "id": "rtx-pro-6000-blackwell-server",
+      "name": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "vramGb": 96,
+      "memoryBandwidthGbps": 1597,
+      "tdpWatts": 600,
+      "estimatedStreetPriceEur": 23000,
+      "sourceClass": "vendor+market-estimate"
+    },
+    {
+      "id": "h200-sxm",
+      "name": "NVIDIA H200 SXM",
+      "vramGb": 141,
+      "tdpWatts": 700,
+      "estimatedStreetPriceEur": 35000,
+      "sourceClass": "estimate"
+    },
+    {
+      "id": "b200-sxm",
+      "name": "NVIDIA B200 SXM",
+      "vramGb": 180,
+      "tdpWatts": 1000,
+      "estimatedStreetPriceEur": 45000,
+      "sourceClass": "estimate"
+    }
+  ],
+  "serverProfiles": [
+    {
+      "id": "proxy-standard",
+      "role": "proxy",
+      "name": "LLMProxy Standard",
+      "cpuCores": 24,
+      "ramGb": 128,
+      "storageTb": 3.84,
+      "networkGbps": 25,
+      "estimatedPurchaseEur": 9000,
+      "idleWatts": 250,
+      "peakWatts": 550
+    },
+    {
+      "id": "proxy-ha",
+      "role": "proxy",
+      "name": "LLMProxy HA Pair",
+      "cpuCores": 48,
+      "ramGb": 256,
+      "storageTb": 7.68,
+      "networkGbps": 25,
+      "estimatedPurchaseEur": 18000,
+      "idleWatts": 500,
+      "peakWatts": 1100
+    },
+    {
+      "id": "gpu-4x-rtxpro6000",
+      "role": "inference",
+      "name": "4x RTX PRO 6000 Blackwell Server",
+      "gpuId": "rtx-pro-6000-blackwell-server",
+      "gpuCount": 4,
+      "totalVramGb": 384,
+      "ramGb": 768,
+      "storageTb": 15.36,
+      "networkGbps": 100,
+      "estimatedPurchaseEur": 100000,
+      "idleWatts": 1200,
+      "peakWatts": 3600
+    }
+  ],
+  "facility": {
+    "electricityEurPerKwh": 0.20,
+    "defaultPue": 1.45,
+    "onPremFitoutEur": 50000,
+    "coloRackMonthlyEur": 750,
+    "coloPowerEurPerKwMonth": 338,
+    "coloNetworkMonthlyEur": 500,
+    "hardwareAmortizationYears": 4,
+    "maintenancePercentPerYear": 0.08
+  },
+  "rental": {
+    "gpuHourlyEur": {
+      "rtx-pro-6000-blackwell-server": 2.8,
+      "h200-sxm": 4.5,
+      "b200-sxm": 6.5
+    },
+    "proxyMonthlyEur": 450
+  }
+}
