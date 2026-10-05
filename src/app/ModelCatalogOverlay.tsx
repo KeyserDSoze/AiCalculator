@@ -4,9 +4,9 @@ import './modelCatalog.css';
 
 type SortMode = 'value' | 'size' | 'coding' | 'general' | 'thinking';
 type SizeMode = 'all' | 'tiny' | 'small' | 'medium' | 'large' | 'frontier';
-
 type Model = (typeof models)[number];
 
+const COMPARE_KEY = 'ai-calculator-compare-models';
 const clamp = (n: number, min = 0, max = 100) => Math.max(min, Math.min(max, n));
 
 function valueScore(model: Model) {
@@ -38,6 +38,15 @@ function contextLabel(tokens: number) {
   return `${Math.round(tokens / 1000)}K`;
 }
 
+function loadCompareIds() {
+  try {
+    const ids = JSON.parse(localStorage.getItem(COMPARE_KEY) || '[]');
+    return Array.isArray(ids) ? ids.filter((id: string) => models.some(m => m.id === id)).slice(0, 4) : [];
+  } catch {
+    return [];
+  }
+}
+
 export default function ModelCatalogOverlay() {
   const params = new URLSearchParams(window.location.search);
   const persisted = params.get('model') || localStorage.getItem('ai-calculator-model') || '';
@@ -46,11 +55,17 @@ export default function ModelCatalogOverlay() {
   const [vendor, setVendor] = useState('all');
   const [size, setSize] = useState<SizeMode>('all');
   const [sort, setSort] = useState<SortMode>('value');
+  const [compareIds, setCompareIds] = useState<string[]>(loadCompareIds);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') setOpen(false); };
+    const onCompareChanged = () => setCompareIds(loadCompareIds());
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener('ai-calculator-compare-changed', onCompareChanged as EventListener);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('ai-calculator-compare-changed', onCompareChanged as EventListener);
+    };
   }, []);
 
   const vendors = useMemo(() => Array.from(new Set(models.map(m => m.vendor))).sort(), []);
@@ -76,6 +91,21 @@ export default function ModelCatalogOverlay() {
     const url = new URL(window.location.href);
     url.searchParams.set('model', id);
     window.location.assign(url.toString());
+  };
+
+  const toggleCompare = (id: string) => {
+    setCompareIds(prev => {
+      const exists = prev.includes(id);
+      const next = exists ? prev.filter(x => x !== id) : prev.length < 4 ? [...prev, id] : [...prev.slice(1), id];
+      localStorage.setItem(COMPARE_KEY, JSON.stringify(next));
+      window.dispatchEvent(new CustomEvent('ai-calculator-compare-changed'));
+      return next;
+    });
+  };
+
+  const openComparison = () => {
+    setOpen(false);
+    window.dispatchEvent(new CustomEvent('ai-calculator-open-comparison'));
   };
 
   return <>
@@ -109,13 +139,14 @@ export default function ModelCatalogOverlay() {
           </select>
         </div>
 
-        <div className="catalog-summary"><strong>{visible.length}</strong> modelli visibili <span>·</span> <b>46</b> modelli censiti <span>·</span> dense + MoE</div>
+        <div className="catalog-summary"><strong>{visible.length}</strong> modelli visibili <span>·</span> <b>{models.length}</b> modelli censiti <span>·</span> dense + MoE {compareIds.length > 0 && <><span>·</span><button className="catalog-compare-open" onClick={openComparison}>Confronta {compareIds.length} →</button></>}</div>
 
         <div className="model-catalog-list">
           {visible.map(model => {
             const selected = persisted === model.id;
+            const comparing = compareIds.includes(model.id);
             const score = Math.round(valueScore(model));
-            return <article className={`catalog-model-card ${selected ? 'catalog-selected' : ''}`} key={model.id}>
+            return <article className={`catalog-model-card ${selected ? 'catalog-selected' : ''} ${comparing ? 'catalog-comparing' : ''}`} key={model.id}>
               <div className="catalog-model-main">
                 <div className="catalog-title-row"><div><span>{model.vendor} · {model.family}</span><h3>{model.name}</h3></div><div className="catalog-value"><small>VALUE</small><b>{score}</b></div></div>
                 <div className="catalog-specs">
@@ -127,7 +158,7 @@ export default function ModelCatalogOverlay() {
                 <div className="catalog-scores"><span>Coding <b>{model.benchmarks.coding}</b></span><span>General <b>{model.benchmarks.general}</b></span><span>Thinking <b>{model.benchmarks.thinking}</b></span></div>
                 <p>{model.notes}</p>
               </div>
-              <div className="catalog-actions"><span className={`size-pill size-${sizeClass(model)}`}>{sizeClass(model)}</span><button className={selected ? 'selected' : ''} onClick={() => selectModel(model.id)}>{selected ? 'In uso' : 'Usa modello'}</button></div>
+              <div className="catalog-actions"><span className={`size-pill size-${sizeClass(model)}`}>{sizeClass(model)}</span><button className={comparing ? 'comparing' : ''} onClick={() => toggleCompare(model.id)}>{comparing ? '✓ Confronto' : '+ Confronta'}</button><button className={selected ? 'selected' : ''} onClick={() => selectModel(model.id)}>{selected ? 'In uso' : 'Usa modello'}</button></div>
             </article>;
           })}
         </div>
